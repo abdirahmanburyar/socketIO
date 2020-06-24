@@ -12,6 +12,7 @@
 
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet">
     <link rel="stylesheet" href="/css/group.css">
+    <link rel="stylesheet" href="/css/dropdown.css" >
 
 
 </head>
@@ -32,10 +33,78 @@
     <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
       <ul class="nav navbar-nav">
       </ul>
-      <ul class="nav navbar-nav navbar-right">
+      <ul class="nav navbar-nav navbar-right" id="reload">
+        <li>
+            <a href="#" class="dropdown-toggle" data-toggle="dropdown">
+                <span class="glyphicon fa fa-bell nav-glyphicon"></span><b class="caret"></b>
+                      <% if(data.totalRequest > 0) {%>
+                        <span class="label label-primary nav-label-icon"><%= data.totalRequest %></span>
+                        <% }else { %>
+                            <span class="label label-primary nav-label-icon" style="display: none;">2</span>
+                            <% } %>
+            </a>
+        
+            <ul class="dropdown-menu">
+                <li>
+                    <div class="navbar-login" id="requestBar">
+                        <div class="col-md-12">
+                            <div class="row">
+                                <div class="dropdown-tag">
+                                    <h3 class="text-center dropdown-tag-head" >
+                                        Friend Requests
+                                    </h3>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="col-md-12">
+                            <% if(data.totalRequest > 0) { %>
+                                <% _.forEach(data.request, function(val){ %>
+                            <div class="row">
+                                <div class="col-md-3">
+                                    <p class="text-center">
+                                        <img src="https://placehold.it/300x300" class="img-circle img-responsive dropdown-img" />
+                                    </p>
+                                </div>
+                                <div class="col-md-9 pleft-0">
+                                    <div class="row">
+                                        <div class="col-md-12">
+                                            <div class="col-md-12">
+                                                <p class="text-left">
+                                                    <strong id=""><%= val.username %></strong>
+                                                </p>
+                                            </div>
+                                            <div class="col-md-12">
+                                                <div class="row">
+                                                    <div class="col-md-6 col-sm-6 col-xs-6">
+                                                        <button type="submit" name="accept" id="accept_friend" class="btn btn-default drop-accept accept"><i class="fa fa-check" aria-hidden="true"></i> Accept</button>
+                                                    </div>
+                                                    <div class="col-md-6 col-sm-6 col-xs-6">
+                                                        <button type="submit" name="cancel" class="btn drop-cancel remove" id="cancel_friend">
+                                                        <i class="fa fa-times" aria-hidden="true"></i> Cancel
+                                                        </button>
+                                                    </div>
+                                                </div>
+                                            </div>
+        
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <% }) %>
+                            <% }else{ %>
+                                <p class="text-center">No freind request</p>
+                                <% }%>
+                            <hr />
+                        </div>
+                    </div>
+                </li>
+                
+            </ul>
+        </li>
         <li><a href="#">Members</a></li>
         <li class="dropdown">
-          <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Dropdown <span class="caret"></span></a>
+          <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false"><%= user.fullName.split(" ")[0] %> <span class="caret"></span></a>
           <ul class="dropdown-menu">
             <li><a href="#">Action</a></li>
             <li role="separator" class="divider"></li>
@@ -65,11 +134,15 @@
 
                                             </div>
                                             <div class="user cover-img">
-                                                <img src="https://placehold.it/300x300" class="img-circle" alt="">
+                                                <% if(user.userImg){ %>
+                                                    <img src='/images/<%= user.userImg%>' class="img-circle" alt="">
+                                                <% }else{ %>
+                                                    <img src='http://placehold.it/300x300' class="img-circle" alt="">
+                                                <% } %>
                                             </div>
                                             <div class="content">
                                                 <div class="main">
-                                                    <h3 class="name">Username || Fullname</h3>
+                                                    <h3 class="name"><%= user.fullName %></h3>
                                                     <p class="profession-online">
                                                         <i class="fa fa-circle online" aria-hidden="true"></i>
                                                         Online
@@ -133,13 +206,32 @@
                             </div>
 
                             <div class="chat_area">
-                            
+                                <ul class="list-unstyled" id="messages">
+                                </ul>
+                                <script id="message-template" type="text/template">
+                                    <li class="left">
+                                        <span class="chat-img1 pull-left">
+                                            <% if(user.userImg){ %>
+                                                <img src='/images/<%= user.userImg%>' class="img-circle" alt="">
+                                            <% }else{ %>
+                                                <img src='http://placehold.it/300x300' class="img-circle" alt="">
+                                            <% } %>
+                                        </span>
+                                        <div class="chat-body1">
+                                            <span class="chat-name">
+                                                {{ sender }}
+                                            </span><br />
+                                            {{ text }}
+                                        </div>
+                                    </li>
+                                </script>
                             </div>
 
                             <div class="message_write">
                               <form action="#" id="message-form" method="post">
                                   <input type="hidden" id="groupName" value="<%= groupName %>" >
-                                  <input type="hidden" id="username" value="<%= user.fullName %>" >
+                                  <input type="hidden" id="sender" value="<%= user.fullName %>" >
+                                  <input type="hidden" id="sender-email" value="<%= user.email %>" >
                                   <textarea class="form-control" name="message" id="msg" placeholder="Type a message"></textarea>
                                   <div class="clearfix"></div>
                                   <div class="chat_bottom">
@@ -164,8 +256,6 @@
                             </div>
                         </div>
 
-
-
                         <div class="gr-rightsidebar">
 
                             <div id="myModal" class="modal fade" role="dialog">
@@ -179,7 +269,7 @@
                                   <div class="modal-body">
                                     <form action="" method="get" id="add_friend">
                                         <input type="hidden" name="receiverName" id="receiverName" value="">
-                                        <input type="hidden" name="sender-name" id="sender-name" value="">
+                                        <input type="hidden" name="sender-name" id="sender-name" value="<%= user.fullName %>">
                                         <button type="submit" id="friend-add" class="btn add"><i class="fa fa-user"></i> Add Friend</button>
                                         
                                         <a id="nameLink" class="btn ">View Profile</a>
@@ -198,8 +288,9 @@
                             </div>
 
                             <div class="col-md-12"  id="main">
-                                <div id="users"></div>
-                                
+                                <div id="users">
+                                    
+                                </div>
                             </div>
 
                         </div>
@@ -213,10 +304,12 @@
     </div>
 
 
-<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+<script src="/js/jquery-3.5.1.min.js"></script>
 <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>  
 <script src="/socket.io/socket.io.js"></script>
 <script src="/js/group/groupchat.js"></script>
+<script src="/js/group/sentRequest.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/mustache.js/4.0.1/mustache.min.js"></script>
 </body>
 
 </html>

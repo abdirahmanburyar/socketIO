@@ -1,7 +1,5 @@
 'use strict'
 
-const { count } = require("../models/User")
-
 module.exports = function(async,_,Clubs){
     return {
         SetRouting: function(router){
@@ -32,7 +30,7 @@ module.exports = function(async,_,Clubs){
                     dataChunk.push(result1.slice(i, i+chunkSize))
                 }
                 country = _.sortBy(country, '_id')
-                res.render('home', { title: 'Footballkik | Home', data: dataChunk, country})
+                res.render('home', { title: 'Footballkik | Home', user: req.user, data: dataChunk, country})
             })
         },
     }

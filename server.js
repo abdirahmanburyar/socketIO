@@ -10,10 +10,10 @@ const cookieParser = require('cookie-parser')
 const mongoose = require('mongoose')
 const passport = require('passport')
 const socketIO = require('socket.io')
-
+const { UsersClass } = require('./helpers/Users')
 const container = require('./container')
 
-container.resolve(function(users,_,home,group) {
+container.resolve(function(users,_,home,group,profile) {
     mongoose.set('useCreateIndex', true);
     mongoose.Promise = global.Promise
     mongoose.connect('mongodb://localhost:27017/socketIODB', { useNewUrlParser: true, useUnifiedTopology:true })
@@ -28,7 +28,8 @@ container.resolve(function(users,_,home,group) {
         })
         configureExpress(app)
 
-        require('./socket/groupchat')(io)
+        require('./socket/groupchat')(io, UsersClass)
+        require('./socket/sentRequest')(io)
 
         const router = require('express-promise-router')()
         
@@ -36,6 +37,7 @@ container.resolve(function(users,_,home,group) {
         users.SetRouting(router)
         home.SetRouting(router)
         group.SetRouting(router)
+        // profile.SetRouting(router)
         app.use(router)
     }
         function configureExpress(app){

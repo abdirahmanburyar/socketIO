@@ -28,6 +28,18 @@ const userSchema = new Schema({
     faceToken: { type: Array },
     google: { type: String, default: '' },
     gogToken: { type: Array },
+    sentRequest: [{
+            fullName: { type: String, default: ''},
+        }],
+    request: [{
+        username: { type: String, default: ''},
+        userId: {type: Schema.Types.ObjectId, ref: 'Users'}
+    }],
+    friendsList: [{
+        friendName: { type: String, default: ''},
+        friendId: {type: Schema.Types.ObjectId, ref: 'Users'}
+    }],
+    totalRequest: {type: Number, default: 0},
 })
 
 userSchema.pre('save', function(next){

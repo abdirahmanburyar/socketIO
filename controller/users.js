@@ -9,7 +9,6 @@ module.exports = function(_,passport) {
 
             router.post('/signup', [
                 check('fullName', 'Name is Required').notEmpty(),
-                check('fullName', 'Name Must Not Be Less Than 5').isLength({min: 15}),
                 check('email', 'Email is Required').notEmpty(),
                 check('email', 'Email is Invalid').isEmail(),
                 check('password', 'Password is Required').notEmpty(),
